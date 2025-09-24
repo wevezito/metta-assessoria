@@ -3,7 +3,6 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
 import { AuthProvider } from "@/lib/contexts/AuthContext";
-import { LayoutWithSidebar } from "@/components/layout/LayoutWithSidebar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,9 +20,7 @@ export default function RootLayout({
     <html lang="pt-BR">
       <body className={inter.className}>
         <AuthProvider>
-          <LayoutWithSidebar>
-            {children}
-          </LayoutWithSidebar>
+          {children}
           <Toaster />
         </AuthProvider>
       </body>
