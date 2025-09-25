@@ -8,8 +8,6 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, Eye, EyeOff, Building2 } from "lucide-react";
-import { useAuth } from "@/lib/contexts/AuthContext";
-
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -17,7 +15,6 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   
-  const { login } = useAuth();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -26,12 +23,23 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const success = await login(email, password);
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
       
-      if (success) {
-        router.push("/");
+      if (data.success) {
+        // Redirecionar para a página solicitada ou dashboard
+        const urlParams = new URLSearchParams(window.location.search);
+        const redirect = urlParams.get('redirect') || '/';
+        router.push(redirect);
       } else {
-        setError("Email ou senha incorretos");
+        setError(data.message || "Email ou senha incorretos");
       }
     } catch (error) {
       setError("Erro ao fazer login. Tente novamente.");
@@ -131,14 +139,10 @@ export default function LoginPage() {
             {/* Credenciais de Teste */}
             <div className="mt-6 p-4 bg-gray-50 rounded-lg">
               <h3 className="text-sm font-medium text-gray-700 mb-2">
-                Credenciais de Teste:
+                Credenciais de Acesso:
               </h3>
               <div className="space-y-1 text-xs text-gray-600">
-                <div><strong>Admin:</strong> kauan@mettaassessoria.com / admin123</div>
-                <div><strong>SDR:</strong> maria@mettaassessoria.com / maria123</div>
-                <div><strong>Closer:</strong> joao@mettaassessoria.com / joao123</div>
-                <div><strong>Designer:</strong> ana@mettaassessoria.com / ana123</div>
-                <div><strong>Traffic:</strong> pedro@mettaassessoria.com / pedro123</div>
+                <div><strong>Administrador:</strong> admin@mettaassessoria.com / metta2024</div>
               </div>
             </div>
           </CardContent>

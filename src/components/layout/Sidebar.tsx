@@ -60,11 +60,22 @@ interface SidebarProps {
 export function Sidebar({ isCollapsed, onToggle }: SidebarProps) {
   const pathname = usePathname();
 
-  const handleLogout = () => {
-    // Aqui você pode implementar a lógica de logout
-    // Por exemplo, limpar tokens, redirecionar para login, etc.
-    console.log("Logout clicked");
-    // Exemplo: window.location.href = "/login";
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/auth/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      
+      // Redirecionar para login
+      window.location.href = '/login';
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error);
+      // Mesmo com erro, redirecionar para login
+      window.location.href = '/login';
+    }
   };
 
   return (

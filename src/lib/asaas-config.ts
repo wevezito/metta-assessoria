@@ -1,16 +1,16 @@
 // Configuração para integração com Asaas - Metta Assessoria
 export const ASAAS_CONFIG = {
-  // API Key do Asaas (produção)
-  API_KEY: '$aact_prod_000MzkwODA2MWY2OGM3MWRlMDU2NWM3MzJlNzZmNGZhZGY6OjRkZWJlZTEwLWQyNTQtNDQwYS1iNzdhLTk3NDIyMzBkZTdiNjo6JGFhY2hfYWI3Yzk2OTgtYWI2Ny00YTRjLTkwZTItMmUzMThlYTgyMzgx',
+  // API Key do Asaas (produção) - usando variável de ambiente
+  API_KEY: process.env.ASAAS_API_KEY || '$aact_prod_000MzkwODA2MWY2OGM3MWRlMDU2NWM3MzJlNzZmNGZhZGY6OjRkZWJlZTEwLWQyNTQtNDQwYS1iNzdhLTk3NDIyMzBkZTdiNjo6JGFhY2hfYWI3Yzk2OTgtYWI2Ny00YTRjLTkwZTItMmUzMThlYTgyMzgx',
   
-  // Ambiente (produção)
-  ENVIRONMENT: 'production',
+  // Ambiente (produção) - usando variável de ambiente
+  ENVIRONMENT: process.env.ASAAS_ENVIRONMENT || 'production',
   
   // Base URL da API (produção)
   BASE_URL: 'https://api.asaas.com/v3',
   
-  // Wallet ID da Metta
-  WALLET_ID: 'a082779d-a766-4606-b6c8-8840f4d9f635',
+  // Wallet ID da Metta - usando variável de ambiente
+  WALLET_ID: process.env.ASAAS_WALLET_ID || 'a082779d-a766-4606-b6c8-8840f4d9f635',
   
   // Webhook Secret (será configurado depois)
   WEBHOOK_SECRET: process.env.ASAAS_WEBHOOK_SECRET || 'webhook_secret_sera_configurado_depois',
