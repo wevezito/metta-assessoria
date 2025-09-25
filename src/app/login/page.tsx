@@ -8,8 +8,6 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, Eye, EyeOff, Building2 } from "lucide-react";
-import { useAuth } from "@/lib/hooks/use-auth";
-
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -18,7 +16,6 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   
   const router = useRouter();
-  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,15 +23,23 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const success = await login(email, password);
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
       
-      if (success) {
+      if (data.success) {
         // Redirecionar para a página solicitada ou dashboard
         const urlParams = new URLSearchParams(window.location.search);
         const redirect = urlParams.get('redirect') || '/';
         router.push(redirect);
       } else {
-        setError("Email ou senha incorretos");
+        setError(data.message || "Email ou senha incorretos");
       }
     } catch (error) {
       setError("Erro ao fazer login. Tente novamente.");
