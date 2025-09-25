@@ -13,7 +13,7 @@ const protectedRoutes = [
   '/tarefas'
 ];
 
-// Lista de rotas públicas
+// Lista de rotas públicas (não precisam de autenticação)
 const publicRoutes = [
   '/login',
   '/api/auth'
@@ -21,6 +21,15 @@ const publicRoutes = [
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  
+  // Se é uma rota pública, permitir acesso
+  const isPublicRoute = publicRoutes.some(route => 
+    pathname === route || pathname.startsWith(route + '/')
+  );
+  
+  if (isPublicRoute) {
+    return NextResponse.next();
+  }
   
   // Verificar se é uma rota protegida
   const isProtectedRoute = protectedRoutes.some(route => 
