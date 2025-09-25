@@ -34,7 +34,11 @@ export default function RelatoriosPage() {
   const {
     connected: metaAdsConnected,
     accountMetrics: metaAdsMetrics,
-    fetchAccountMetrics: fetchMetaAdsMetrics
+    fetchAccountMetrics: fetchMetaAdsMetrics,
+    totalSpend,
+    totalImpressions,
+    totalClicks,
+    averageCTR
   } = useMetaAds();
 
   // Buscar dados ao mudar o período
@@ -290,7 +294,7 @@ export default function RelatoriosPage() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-red-600">
-                  {isLoading ? '...' : metaAdsMetrics ? formatCurrency(metaAdsMetrics.totalSpend) : 'R$ 0'}
+                  {isLoading ? '...' : formatCurrency(totalSpend)}
                 </div>
                 <p className="text-xs text-muted-foreground">
                   Total investido
@@ -305,7 +309,7 @@ export default function RelatoriosPage() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-blue-600">
-                  {isLoading ? '...' : metaAdsMetrics ? formatNumber(metaAdsMetrics.totalImpressions) : '0'}
+                  {isLoading ? '...' : formatNumber(totalImpressions)}
                 </div>
                 <p className="text-xs text-muted-foreground">
                   Total de impressões
@@ -320,7 +324,7 @@ export default function RelatoriosPage() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-green-600">
-                  {isLoading ? '...' : metaAdsMetrics ? formatNumber(metaAdsMetrics.totalClicks) : '0'}
+                  {isLoading ? '...' : formatNumber(totalClicks)}
                 </div>
                 <p className="text-xs text-muted-foreground">
                   Total de cliques
@@ -335,7 +339,7 @@ export default function RelatoriosPage() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-purple-600">
-                  {isLoading ? '...' : metaAdsMetrics ? `${metaAdsMetrics.ctr.toFixed(2)}%` : '0%'}
+                  {isLoading ? '...' : `${averageCTR.toFixed(2)}%`}
                 </div>
                 <p className="text-xs text-muted-foreground">
                   Taxa de cliques
@@ -356,15 +360,15 @@ export default function RelatoriosPage() {
                     <div className="space-y-2">
                       <div className="flex justify-between">
                         <span className="text-sm text-gray-600">Investimento Total:</span>
-                        <span className="font-medium">{formatCurrency(metaAdsMetrics.totalSpend)}</span>
+                        <span className="font-medium">{formatCurrency(totalSpend)}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-sm text-gray-600">Impressões:</span>
-                        <span className="font-medium">{formatNumber(metaAdsMetrics.totalImpressions)}</span>
+                        <span className="font-medium">{formatNumber(totalImpressions)}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-sm text-gray-600">Cliques:</span>
-                        <span className="font-medium">{formatNumber(metaAdsMetrics.totalClicks)}</span>
+                        <span className="font-medium">{formatNumber(totalClicks)}</span>
                       </div>
                     </div>
                   </div>
@@ -373,18 +377,18 @@ export default function RelatoriosPage() {
                     <div className="space-y-2">
                       <div className="flex justify-between">
                         <span className="text-sm text-gray-600">CTR:</span>
-                        <span className="font-medium">{metaAdsMetrics.ctr.toFixed(2)}%</span>
+                        <span className="font-medium">{averageCTR.toFixed(2)}%</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-sm text-gray-600">CPC Médio:</span>
                         <span className="font-medium">
-                          {metaAdsMetrics.totalClicks > 0 ? formatCurrency(metaAdsMetrics.totalSpend / metaAdsMetrics.totalClicks) : 'R$ 0'}
+                          {totalClicks > 0 ? formatCurrency(totalSpend / totalClicks) : 'R$ 0'}
                         </span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-sm text-gray-600">CPM:</span>
                         <span className="font-medium">
-                          {metaAdsMetrics.totalImpressions > 0 ? formatCurrency((metaAdsMetrics.totalSpend / metaAdsMetrics.totalImpressions) * 1000) : 'R$ 0'}
+                          {totalImpressions > 0 ? formatCurrency((totalSpend / totalImpressions) * 1000) : 'R$ 0'}
                         </span>
                       </div>
                     </div>
@@ -405,8 +409,8 @@ export default function RelatoriosPage() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-green-600">
-                  {isLoading ? '...' : (asaasMetrics && metaAdsMetrics && metaAdsMetrics.totalSpend > 0) 
-                    ? `${((asaasMetrics.totalSales - metaAdsMetrics.totalSpend) / metaAdsMetrics.totalSpend * 100).toFixed(1)}%`
+                  {isLoading ? '...' : (asaasMetrics && totalSpend > 0) 
+                    ? `${((asaasMetrics.totalSales - totalSpend) / totalSpend * 100).toFixed(1)}%`
                     : '0%'}
                 </div>
                 <p className="text-xs text-muted-foreground">
@@ -422,8 +426,8 @@ export default function RelatoriosPage() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-blue-600">
-                  {isLoading ? '...' : (asaasMetrics && metaAdsMetrics && asaasMetrics.totalPayments > 0)
-                    ? formatCurrency(metaAdsMetrics.totalSpend / asaasMetrics.totalPayments)
+                  {isLoading ? '...' : (asaasMetrics && asaasMetrics.totalPayments > 0)
+                    ? formatCurrency(totalSpend / asaasMetrics.totalPayments)
                     : 'R$ 0'}
                 </div>
                 <p className="text-xs text-muted-foreground">
@@ -439,8 +443,8 @@ export default function RelatoriosPage() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold text-purple-600">
-                  {isLoading ? '...' : (asaasMetrics && metaAdsMetrics && metaAdsMetrics.totalSpend > 0 && asaasMetrics.totalPayments > 0)
-                    ? (asaasMetrics.averageTicket / (metaAdsMetrics.totalSpend / asaasMetrics.totalPayments)).toFixed(1)
+                  {isLoading ? '...' : (asaasMetrics && totalSpend > 0 && asaasMetrics.totalPayments > 0)
+                    ? (asaasMetrics.averageTicket / (totalSpend / asaasMetrics.totalPayments)).toFixed(1)
                     : '0'}
                 </div>
                 <p className="text-xs text-muted-foreground">
@@ -463,7 +467,7 @@ export default function RelatoriosPage() {
                       <div className="flex justify-between">
                         <span className="text-sm text-gray-600">Investimento em Marketing:</span>
                         <span className="font-medium">
-                          {isLoading ? '...' : metaAdsMetrics ? formatCurrency(metaAdsMetrics.totalSpend) : 'R$ 0'}
+                          {isLoading ? '...' : formatCurrency(totalSpend)}
                         </span>
                       </div>
                       <div className="flex justify-between">
@@ -475,8 +479,8 @@ export default function RelatoriosPage() {
                       <div className="flex justify-between">
                         <span className="text-sm text-gray-600">ROI:</span>
                         <span className="font-medium">
-                          {isLoading ? '...' : (asaasMetrics && metaAdsMetrics && metaAdsMetrics.totalSpend > 0) 
-                            ? `${((asaasMetrics.totalSales - metaAdsMetrics.totalSpend) / metaAdsMetrics.totalSpend * 100).toFixed(1)}%`
+                          {isLoading ? '...' : (asaasMetrics && totalSpend > 0) 
+                            ? `${((asaasMetrics.totalSales - totalSpend) / totalSpend * 100).toFixed(1)}%`
                             : '0%'}
                         </span>
                       </div>
@@ -488,7 +492,7 @@ export default function RelatoriosPage() {
                       <div className="flex justify-between">
                         <span className="text-sm text-gray-600">Cliques:</span>
                         <span className="font-medium">
-                          {isLoading ? '...' : metaAdsMetrics ? formatNumber(metaAdsMetrics.totalClicks) : '0'}
+                          {isLoading ? '...' : formatNumber(totalClicks)}
                         </span>
                       </div>
                       <div className="flex justify-between">
@@ -500,8 +504,8 @@ export default function RelatoriosPage() {
                       <div className="flex justify-between">
                         <span className="text-sm text-gray-600">Taxa de Conversão:</span>
                         <span className="font-medium">
-                          {isLoading ? '...' : (metaAdsMetrics && asaasMetrics && metaAdsMetrics.totalClicks > 0)
-                            ? `${(asaasMetrics.totalPayments / metaAdsMetrics.totalClicks * 100).toFixed(2)}%`
+                          {isLoading ? '...' : (asaasMetrics && totalClicks > 0)
+                            ? `${(asaasMetrics.totalPayments / totalClicks * 100).toFixed(2)}%`
                             : '0%'}
                         </span>
                       </div>

@@ -175,7 +175,11 @@ export default function ConexoesPage() {
                 )}
               </Button>
               <Button
-                onClick={() => fetchAsaasMetrics()}
+                onClick={async () => {
+                  const startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+                  const endDate = new Date().toISOString().split('T')[0];
+                  await fetchAsaasMetrics(startDate, endDate);
+                }}
                 disabled={asaasLoading}
                 size="sm"
               >
@@ -227,7 +231,11 @@ export default function ConexoesPage() {
                 )}
               </Button>
               <Button
-                onClick={() => fetchMetaAdsMetrics()}
+                onClick={async () => {
+                  const startDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+                  const endDate = new Date().toISOString().split('T')[0];
+                  await fetchMetaAdsMetrics(startDate, endDate);
+                }}
                 disabled={metaAdsLoading}
                 size="sm"
               >

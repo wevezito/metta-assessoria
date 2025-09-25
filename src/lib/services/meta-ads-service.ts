@@ -179,7 +179,7 @@ class MetaAdsService {
 
       // Para cada campanha, buscar insights específicos do período
       const campaignsWithInsights = await Promise.all(
-        response.data.data.map(async (campaign: any) => {
+        response.data.data.map(async (campaign: { id: string; name: string; status: string; objective: string }) => {
           try {
             // Buscar insights específicos da campanha para o período
             const campaignInsights = await this.getCampaignInsights(campaign.id, startDate, endDate);
@@ -250,10 +250,10 @@ class MetaAdsService {
       }
 
       // Agregar dados de todos os dias do período
-      const aggregated = response.data.data.reduce((acc: any, day: any) => ({
-        spend: acc.spend + parseFloat(day.spend || 0),
-        impressions: acc.impressions + parseInt(day.impressions || 0),
-        clicks: acc.clicks + parseInt(day.clicks || 0),
+      const aggregated = response.data.data.reduce((acc: { spend: number; impressions: number; clicks: number; actions: any[] }, day: { spend?: string; impressions?: string; clicks?: string; actions?: any[] }) => ({
+        spend: acc.spend + parseFloat(day.spend || '0'),
+        impressions: acc.impressions + parseInt(day.impressions || '0'),
+        clicks: acc.clicks + parseInt(day.clicks || '0'),
         actions: [...(acc.actions || []), ...(day.actions || [])]
       }), { spend: 0, impressions: 0, clicks: 0, actions: [] });
 
@@ -342,11 +342,11 @@ class MetaAdsService {
   }
 
   // Processar dados brutos da API
-  private processMetricsData(rawData: any[]): MetaAdsMetrics[] {
+  private processMetricsData(rawData: { actions?: { action_type: string; value: number }[]; [key: string]: any }[]): MetaAdsMetrics[] {
     return rawData.map(item => {
       // Extrair ações (leads) dos dados
       const actions = item.actions || [];
-      const leads = actions.find((action: any) => 
+      const leads = actions.find((action: { action_type: string; value: number }) => 
         action.action_type === 'lead' || 
         action.action_type === 'offsite_conversion' ||
         action.action_type === 'purchase' ||
@@ -357,7 +357,7 @@ class MetaAdsService {
         spend: parseFloat(item.spend) || 0,
         impressions: parseInt(item.impressions) || 0,
         clicks: parseInt(item.clicks) || 0,
-        leads: parseInt(leads) || 0,
+        leads: leads || 0,
         cpc: item.clicks > 0 ? parseFloat(item.spend) / parseInt(item.clicks) : 0,
         cpm: item.impressions > 0 ? (parseFloat(item.spend) / parseInt(item.impressions)) * 1000 : 0,
         ctr: item.impressions > 0 ? (parseInt(item.clicks) / parseInt(item.impressions)) * 100 : 0,
@@ -368,7 +368,7 @@ class MetaAdsService {
   }
 
   // Processar dados de campanhas
-  private processCampaignsData(rawData: any[]): MetaAdsCampaign[] {
+  private processCampaignsData(rawData: { id: string; name: string; status: string; objective: string; insights?: { data?: { spend?: string; impressions?: string; clicks?: string; actions?: { action_type: string; value: number }[] }[] } }[]): MetaAdsCampaign[] {
     return rawData.map(campaign => {
       const insights = campaign.insights?.data?.[0] || {};
       
@@ -391,16 +391,16 @@ class MetaAdsService {
         name: campaign.name,
         status: campaign.status,
         objective: campaign.objective,
-        spend: parseFloat(insights.spend) || 0,
-        impressions: parseInt(insights.impressions) || 0,
-        clicks: parseInt(insights.clicks) || 0,
+        spend: parseFloat(insights.spend || '0') || 0,
+        impressions: parseInt(insights.impressions || '0') || 0,
+        clicks: parseInt(insights.clicks || '0') || 0,
         leads: this.extractLeadsFromActions(insights.actions || [])
       };
     });
   }
 
   // Extrair leads das ações (mais tipos de conversão)
-  private extractLeadsFromActions(actions: any[]): number {
+  private extractLeadsFromActions(actions: { action_type: string; value: number }[]): number {
     const leadActions = actions.filter(action => 
       action.action_type === 'lead' || 
       action.action_type === 'offsite_conversion' ||
@@ -408,7 +408,7 @@ class MetaAdsService {
       action.action_type === 'complete_registration'
     );
     
-    return leadActions.reduce((sum, action) => sum + parseInt(action.value || 0), 0);
+    return leadActions.reduce((sum, action) => sum + (action.value || 0), 0);
   }
 
   // Agregar métricas de múltiplos dias
@@ -488,7 +488,7 @@ class MetaAdsService {
     maxRetries: number = 3,
     delay: number = 1000
   ): Promise<T> {
-    let lastError: any;
+    let lastError: Error | unknown;
     
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
