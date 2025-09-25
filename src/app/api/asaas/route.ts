@@ -127,12 +127,21 @@ export async function GET(request: NextRequest) {
     }
 
   } catch (error: any) {
-    console.error('Erro na API do Asaas:', error);
+    console.error('❌ Erro na API do Asaas:', error);
+    console.error('❌ Stack trace:', error.stack);
+    console.error('❌ Error details:', {
+      message: error.message,
+      code: error.code,
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      data: error.response?.data
+    });
     
     return NextResponse.json(
       { 
         error: 'Erro interno do servidor',
-        details: error.message || 'Erro desconhecido'
+        details: error.message || 'Erro desconhecido',
+        step: 'api_handler'
       },
       { status: 500 }
     );
@@ -188,12 +197,21 @@ export async function POST(request: NextRequest) {
     }
 
   } catch (error: any) {
-    console.error('Erro na API POST do Asaas:', error);
+    console.error('❌ Erro na API POST do Asaas:', error);
+    console.error('❌ Stack trace:', error.stack);
+    console.error('❌ Error details:', {
+      message: error.message,
+      code: error.code,
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      data: error.response?.data
+    });
     
     return NextResponse.json(
       { 
         error: 'Erro interno do servidor',
-        details: error.message || 'Erro desconhecido'
+        details: error.message || 'Erro desconhecido',
+        step: 'api_post_handler'
       },
       { status: 500 }
     );
