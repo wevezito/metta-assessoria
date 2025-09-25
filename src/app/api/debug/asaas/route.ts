@@ -22,15 +22,28 @@ export async function GET() {
     const asaasService = new AsaasService();
     console.log('🧪 Testando conexão...');
     
-    const isConnected = await asaasService.testConnection();
-    console.log('✅ Resultado da conexão:', isConnected);
-    
-    return NextResponse.json({
-      success: true,
-      configValid: isConfigValid,
-      connectionTest: isConnected,
-      message: 'Teste de conexão Asaas concluído'
-    });
+    try {
+      const isConnected = await asaasService.testConnection();
+      console.log('✅ Resultado da conexão:', isConnected);
+      
+      return NextResponse.json({
+        success: true,
+        configValid: isConfigValid,
+        connectionTest: isConnected,
+        message: 'Teste de conexão Asaas concluído'
+      });
+    } catch (connectionError) {
+      console.error('❌ Erro específico na conexão:', connectionError);
+      
+      return NextResponse.json({
+        success: true,
+        configValid: isConfigValid,
+        connectionTest: false,
+        connectionError: connectionError instanceof Error ? connectionError.message : 'Erro desconhecido',
+        connectionStack: connectionError instanceof Error ? connectionError.stack : undefined,
+        message: 'Teste de conexão Asaas falhou'
+      });
+    }
     
   } catch (error) {
     console.error('❌ Erro no debug Asaas:', error);
