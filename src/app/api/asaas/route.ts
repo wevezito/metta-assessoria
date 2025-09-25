@@ -6,8 +6,14 @@ const asaasService = new AsaasService();
 
 export async function GET(request: NextRequest) {
   try {
+    console.log('🔍 API Asaas - Verificando configuração...');
+    
     // Verificar se a configuração está válida
-    if (!validateAsaasConfig()) {
+    const isConfigValid = validateAsaasConfig();
+    console.log('✅ Configuração válida:', isConfigValid);
+    
+    if (!isConfigValid) {
+      console.error('❌ Configuração do Asaas inválida');
       return NextResponse.json(
         { error: 'Configuração do Asaas não encontrada' },
         { status: 400 }
@@ -20,7 +26,10 @@ export async function GET(request: NextRequest) {
     switch (action) {
       case 'test':
         // Testar conexão
+        console.log('🧪 API Asaas - Iniciando teste de conexão...');
         const isConnected = await asaasService.testConnection();
+        console.log('✅ API Asaas - Resultado do teste:', isConnected);
+        
         return NextResponse.json({
           success: isConnected,
           connected: isConnected,

@@ -54,10 +54,12 @@ export class AsaasService {
     try {
       console.log('🧪 Testando conexão com Asaas...');
       console.log('API Key:', this.apiKey ? 'Configurada' : 'Não configurada');
+      console.log('API Key (primeiros 20 chars):', this.apiKey ? this.apiKey.substring(0, 20) + '...' : 'Não configurada');
       console.log('Wallet ID:', ASAAS_CONFIG.WALLET_ID);
       console.log('Base URL:', this.baseURL);
       
-      // Testar buscando pagamentos da wallet específica
+      // Primeiro, testar uma chamada simples para verificar se a API está respondendo
+      console.log('📡 Fazendo chamada para /payments...');
       const response = await this.api.get('/payments', {
         params: { 
           limit: 1,
@@ -65,14 +67,19 @@ export class AsaasService {
         }
       });
 
-      console.log('✅ Conexão com Asaas bem-sucedida!');
+      console.log('✅ Resposta recebida:');
+      console.log('Status:', response.status);
+      console.log('Data:', response.data);
       console.log('Total de pagamentos encontrados:', response.data.totalCount || 0);
       return true;
     } catch (error: any) {
       console.error('❌ Erro ao conectar com Asaas:');
       console.error('Status:', error.response?.status);
+      console.error('Status Text:', error.response?.statusText);
       console.error('Data:', error.response?.data);
+      console.error('Headers:', error.response?.headers);
       console.error('Message:', error.message);
+      console.error('Code:', error.code);
       console.error('Full error:', error);
       return false;
     }

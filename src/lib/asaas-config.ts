@@ -129,10 +129,19 @@ export interface AsaasMetrics {
 
 // Função para validar configuração
 export function validateAsaasConfig(): boolean {
-  return !!(
+  console.log('🔍 Validando configuração Asaas:');
+  console.log('API_KEY:', ASAAS_CONFIG.API_KEY ? 'Configurada' : 'Não configurada');
+  console.log('ENVIRONMENT:', ASAAS_CONFIG.ENVIRONMENT);
+  console.log('WALLET_ID:', ASAAS_CONFIG.WALLET_ID);
+  console.log('BASE_URL:', ASAAS_CONFIG.BASE_URL);
+  
+  const isValid = !!(
     ASAAS_CONFIG.API_KEY &&
     ASAAS_CONFIG.API_KEY !== 'sua_api_key_aqui' &&
     ASAAS_CONFIG.ENVIRONMENT &&
     ASAAS_CONFIG.WALLET_ID
   );
+  
+  console.log('✅ Configuração válida:', isValid);
+  return isValid;
 }
